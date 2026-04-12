@@ -708,3 +708,27 @@ if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     el.style.transitionDuration = '0.001ms';
   });
 }
+/* ──────────────────────────────────────────
+   23. REAL BUTTON FUNCTIONALITY
+────────────────────────────────────────── */
+
+// Download button
+document.querySelectorAll('.btn-primary').forEach(btn => {
+  btn.addEventListener('click', () => {
+    alert("🚀 NexusOS Alpha download coming soon!");
+  });
+});
+
+// Watch demo
+document.querySelectorAll('.btn-ghost').forEach(btn => {
+  btn.addEventListener('click', () => {
+    window.open("https://youtube.com", "_blank");
+  });
+});
+
+// Pricing buttons
+document.querySelectorAll('.price-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    alert("💳 Payment system coming soon!");
+  });
+});
