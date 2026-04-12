@@ -33,6 +33,40 @@
       console.error(error);
     });
   </script>
+  <script type="module">
+  // 🔥 Firebase core
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
+  // 🔐 Auth (for login later)
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  // ☁️ Firestore (database)
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // 📊 Analytics (optional but added)
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+
+  // 🔑 Your config (already correct)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAvkJ5UupL4OO8E7jrwx_1ToKKr4SYyKI8",
+    authDomain: "nexusos-491f1.firebaseapp.com",
+    projectId: "nexusos-491f1",
+    storageBucket: "nexusos-491f1.firebasestorage.app",
+    messagingSenderId: "949362832125",
+    appId: "1:949362832125:web:ceda3b5f52de5cd18cc494",
+    measurementId: "G-0CC1Q5Q1ZZ"
+  };
+
+  // 🚀 Initialize
+  const app = initializeApp(firebaseConfig);
+
+  // Enable services
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const analytics = getAnalytics(app);
+
+  console.log("🔥 Firebase fully connected");
+  </script>
 <body>
 
   <!-- CUSTOM CURSOR -->
