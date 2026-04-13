@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NexusOS v3</title>
+  <style>
+    body { margin:0; background:#0a0a0a; color:white; font-family:monospace; }
+
+    .taskbar {
+      position:fixed; bottom:0; width:100%;
+      background:#111; padding:8px; display:flex; justify-content:space-between;
+    }
+
+    .icon { margin:20px; cursor:pointer; }
+
+    .window {
+      display:none; position:absolute; top:80px; left:80px;
+      background:#1a1a1a; border:1px solid #555; width:320px;
+    }
+
+    .titlebar {
+      background:#222; padding:5px; cursor:move;
+      display:flex; justify-content:space-between;
+    }
+
+    .close { color:red; cursor:pointer; }
+
+    input, textarea {
+      width:100%; background:black; color:white; border:1px solid #555;
+    }
+
+    iframe { width:100%; height:200px; }
+
+    #loginScreen {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background:black; display:flex; justify-content:center; align-items:center;
+      flex-direction:column;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="loginScreen">
+  <h2>NexusOS Login</h2>
+  <input id="user" placeholder="Enter username">
+  <button onclick="login()">Enter</button>
+</div>
+
+<div class="desktop" style="display:none;" id="desktop">
+  <div class="icon" onclick="openApp('terminal')">🖥 Terminal</div>
+  <div class="icon" onclick="openApp('notes')">📝 Notes</div>
+  <div class="icon" onclick="openApp('browser')">🌐 Browser</div>
+  <div class="icon" onclick="openApp('files')">📁 Files</div>
+</div>
+
+<!-- Terminal -->
+<div id="terminal" class="window">
+  <div class="titlebar" onmousedown="drag(event,'terminal')">
+    Terminal <span class="close" onclick="closeApp('terminal')">X</span>
+  </div>
+  <input id="cmd">
+  <div id="output"></div>
+</div>
+
+<!-- Notes -->
+<div id="notes" class="window">
+  <div class="titlebar" onmousedown="drag(event,'notes')">
+    Notes <span class="close" onclick="closeApp('notes')">X</span>
+  </div>
+  <textarea id="noteArea"></textarea>
+</div>
+
+<!-- Browser -->
+<div id="browser" class="window">
+  <div class="titlebar" onmousedown="drag(event,'browser')">
+    Browser <span class="close" onclick="closeApp('browser')">X</span>
+  </div>
+  <input id="url" placeholder="Enter URL (https://...)">
+  <button onclick="go()">Go</button>
+  <iframe id="frame"></iframe>
+</div>
+
+<!-- Files -->
+<div id="files" class="window">
+  <div class="titlebar" onmousedown="drag(event,'files')">
+    Files <span class="close" onclick="closeApp('files')">X</span>
+  </div>
+  <input id="filename" placeholder="File name">
+  <textarea id="filecontent"></textarea>
+  <button onclick="saveFile()">Save</button>
+  <div id="filelist"></div>
+</div>
+
+<div class="taskbar">
+  <div>NexusOS v3</div>
+  <div id="clock"></div>
+</div>
+
+<script>
+// login
+function login(){
+  let user = document.getElementById("user").value;
+  if(user){
+    document.getElementById("loginScreen").style.display="none";
+    document.getElementById("desktop").style.display="block";
+  }
+}
+
+// apps
+function openApp(app){ document.getElementById(app).style.display="block"; }
+function closeApp(app){ document.getElementById(app).style.display="none"; }
+
+// terminal
+document.getElementById("cmd").addEventListener("keydown", function(e){
+  if(e.key==="Enter"){
+    let cmd=this.value.toLowerCase();
+    let out=document.getElementById("output");
+
+    if(cmd==="help"){
+      out.innerHTML+="<p>Commands: hello, time, clear</p>";
+    }
+    else if(cmd==="hello"){
+      out.innerHTML+="<p>Hello 👋</p>";
+    }
+    else if(cmd==="time"){
+      out.innerHTML+="<p>"+new Date()+"</p>";
+    }
+    else if(cmd==="clear"){
+      out.innerHTML="";
+    }
+    else{
+      out.innerHTML+="<p>Unknown ❌</p>";
+    }
+
+    this.value="";
+  }
+});
+
+// clock
+setInterval(()=>{
+  document.getElementById("clock").innerText=new Date().toLocaleTimeString();
+},1000);
+
+// notes save
+let note=document.getElementById("noteArea");
+note.value=localStorage.getItem("notes")||"";
+note.oninput=()=>localStorage.setItem("notes",note.value);
+
+// browser
+function go(){
+  let url=document.getElementById("url").value;
+  document.getElementById("frame").src=url;
+}
+
+// file system
+function saveFile(){
+  let name=document.getElementById("filename").value;
+  let content=document.getElementById("filecontent").value;
+  localStorage.setItem(name,content);
+  loadFiles();
+}
+
+function loadFiles(){
+  let list=document.getElementById("filelist");
+  list.innerHTML="";
+  for(let i=0;i<localStorage.length;i++){
+    let key=localStorage.key(i);
+    list.innerHTML+="<p onclick='openFile(\""+key+"\")'>"+key+"</p>";
+  }
+}
+
+function openFile(name){
+  document.getElementById("filename").value=name;
+  document.getElementById("filecontent").value=localStorage.getItem(name);
+}
+
+loadFiles();
+
+// drag
+function drag(e,id){
+  let el=document.getElementById(id);
+  let shiftX=e.clientX-el.getBoundingClientRect().left;
+  let shiftY=e.clientY-el.getBoundingClientRect().top;
+
+  function moveAt(x,y){
+    el.style.left=x-shiftX+'px';
+    el.style.top=y-shiftY+'px';
+  }
+
+  function onMouseMove(e){ moveAt(e.pageX,e.pageY); }
+
+  document.addEventListener('mousemove',onMouseMove);
+
+  document.onmouseup=function(){
+    document.removeEventListener('mousemove',onMouseMove);
+    document.onmouseup=null;
+  };
+}
+</script>
+
+</body>
+</html>
