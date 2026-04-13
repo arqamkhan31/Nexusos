@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NexusOS v3</title>
+  <title>NexusOS v4 AI</title>
   <style>
     body { margin:0; background:#0a0a0a; color:white; font-family:monospace; }
 
@@ -14,7 +14,7 @@
 
     .window {
       display:none; position:absolute; top:80px; left:80px;
-      background:#1a1a1a; border:1px solid #555; width:320px;
+      background:#1a1a1a; border:1px solid #555; width:330px;
     }
 
     .titlebar {
@@ -35,6 +35,13 @@
       background:black; display:flex; justify-content:center; align-items:center;
       flex-direction:column;
     }
+
+    #chatbox {
+      height:200px;
+      overflow-y:auto;
+      border:1px solid #555;
+      padding:5px;
+    }
   </style>
 </head>
 
@@ -51,9 +58,19 @@
   <div class="icon" onclick="openApp('notes')">📝 Notes</div>
   <div class="icon" onclick="openApp('browser')">🌐 Browser</div>
   <div class="icon" onclick="openApp('files')">📁 Files</div>
+  <div class="icon" onclick="openApp('ai')">🤖 AI</div>
 </div>
 
-<!-- Terminal -->
+<!-- AI -->
+<div id="ai" class="window">
+  <div class="titlebar" onmousedown="drag(event,'ai')">
+    Nexus AI <span class="close" onclick="closeApp('ai')">X</span>
+  </div>
+  <div id="chatbox"></div>
+  <input id="userInput" placeholder="Ask something...">
+</div>
+
+<!-- other apps (same as v3) -->
 <div id="terminal" class="window">
   <div class="titlebar" onmousedown="drag(event,'terminal')">
     Terminal <span class="close" onclick="closeApp('terminal')">X</span>
@@ -62,7 +79,6 @@
   <div id="output"></div>
 </div>
 
-<!-- Notes -->
 <div id="notes" class="window">
   <div class="titlebar" onmousedown="drag(event,'notes')">
     Notes <span class="close" onclick="closeApp('notes')">X</span>
@@ -70,39 +86,34 @@
   <textarea id="noteArea"></textarea>
 </div>
 
-<!-- Browser -->
 <div id="browser" class="window">
   <div class="titlebar" onmousedown="drag(event,'browser')">
     Browser <span class="close" onclick="closeApp('browser')">X</span>
   </div>
-  <input id="url" placeholder="Enter URL (https://...)">
-  <button onclick="go()">Go</button>
+  <input id="url"><button onclick="go()">Go</button>
   <iframe id="frame"></iframe>
 </div>
 
-<!-- Files -->
 <div id="files" class="window">
   <div class="titlebar" onmousedown="drag(event,'files')">
     Files <span class="close" onclick="closeApp('files')">X</span>
   </div>
-  <input id="filename" placeholder="File name">
-  <textarea id="filecontent"></textarea>
+  <input id="filename"><textarea id="filecontent"></textarea>
   <button onclick="saveFile()">Save</button>
   <div id="filelist"></div>
 </div>
 
 <div class="taskbar">
-  <div>NexusOS v3</div>
+  <div>NexusOS v4 AI</div>
   <div id="clock"></div>
 </div>
 
 <script>
 // login
 function login(){
-  let user = document.getElementById("user").value;
-  if(user){
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("desktop").style.display="block";
+  if(document.getElementById("user").value){
+    loginScreen.style.display="none";
+    desktop.style.display="block";
   }
 }
 
@@ -110,27 +121,39 @@ function login(){
 function openApp(app){ document.getElementById(app).style.display="block"; }
 function closeApp(app){ document.getElementById(app).style.display="none"; }
 
+// AI logic
+let input = document.getElementById("userInput");
+input.addEventListener("keydown", function(e){
+  if(e.key==="Enter"){
+    let msg = this.value.toLowerCase();
+    let chat = document.getElementById("chatbox");
+
+    chat.innerHTML += "<p>🧑: "+msg+"</p>";
+
+    let reply = "I don't understand 🤔";
+
+    if(msg.includes("hello")) reply="Hello 👋";
+    else if(msg.includes("time")) reply=new Date().toLocaleTimeString();
+    else if(msg.includes("your name")) reply="I am Nexus AI 🤖";
+    else if(msg.includes("help")) reply="Try: hello, time, your name";
+
+    chat.innerHTML += "<p>🤖: "+reply+"</p>";
+
+    this.value="";
+    chat.scrollTop = chat.scrollHeight;
+  }
+});
+
 // terminal
 document.getElementById("cmd").addEventListener("keydown", function(e){
   if(e.key==="Enter"){
     let cmd=this.value.toLowerCase();
     let out=document.getElementById("output");
 
-    if(cmd==="help"){
-      out.innerHTML+="<p>Commands: hello, time, clear</p>";
-    }
-    else if(cmd==="hello"){
-      out.innerHTML+="<p>Hello 👋</p>";
-    }
-    else if(cmd==="time"){
-      out.innerHTML+="<p>"+new Date()+"</p>";
-    }
-    else if(cmd==="clear"){
-      out.innerHTML="";
-    }
-    else{
-      out.innerHTML+="<p>Unknown ❌</p>";
-    }
+    if(cmd==="help") out.innerHTML+="<p>Commands: hello, time</p>";
+    else if(cmd==="hello") out.innerHTML+="<p>Hello 👋</p>";
+    else if(cmd==="time") out.innerHTML+="<p>"+new Date()+"</p>";
+    else out.innerHTML+="<p>Unknown ❌</p>";
 
     this.value="";
   }
@@ -138,7 +161,7 @@ document.getElementById("cmd").addEventListener("keydown", function(e){
 
 // clock
 setInterval(()=>{
-  document.getElementById("clock").innerText=new Date().toLocaleTimeString();
+  clock.innerText=new Date().toLocaleTimeString();
 },1000);
 
 // notes save
@@ -147,53 +170,40 @@ note.value=localStorage.getItem("notes")||"";
 note.oninput=()=>localStorage.setItem("notes",note.value);
 
 // browser
-function go(){
-  let url=document.getElementById("url").value;
-  document.getElementById("frame").src=url;
-}
+function go(){ frame.src=url.value; }
 
 // file system
 function saveFile(){
-  let name=document.getElementById("filename").value;
-  let content=document.getElementById("filecontent").value;
-  localStorage.setItem(name,content);
+  localStorage.setItem(filename.value,filecontent.value);
   loadFiles();
 }
-
 function loadFiles(){
-  let list=document.getElementById("filelist");
-  list.innerHTML="";
+  filelist.innerHTML="";
   for(let i=0;i<localStorage.length;i++){
-    let key=localStorage.key(i);
-    list.innerHTML+="<p onclick='openFile(\""+key+"\")'>"+key+"</p>";
+    let k=localStorage.key(i);
+    filelist.innerHTML+="<p onclick='openFile(\""+k+"\")'>"+k+"</p>";
   }
 }
-
-function openFile(name){
-  document.getElementById("filename").value=name;
-  document.getElementById("filecontent").value=localStorage.getItem(name);
+function openFile(n){
+  filename.value=n;
+  filecontent.value=localStorage.getItem(n);
 }
-
 loadFiles();
 
 // drag
 function drag(e,id){
   let el=document.getElementById(id);
-  let shiftX=e.clientX-el.getBoundingClientRect().left;
-  let shiftY=e.clientY-el.getBoundingClientRect().top;
+  let shiftX=e.clientX-el.offsetLeft;
+  let shiftY=e.clientY-el.offsetTop;
 
-  function moveAt(x,y){
-    el.style.left=x-shiftX+'px';
-    el.style.top=y-shiftY+'px';
+  function move(e){
+    el.style.left=e.pageX-shiftX+'px';
+    el.style.top=e.pageY-shiftY+'px';
   }
 
-  function onMouseMove(e){ moveAt(e.pageX,e.pageY); }
-
-  document.addEventListener('mousemove',onMouseMove);
-
-  document.onmouseup=function(){
-    document.removeEventListener('mousemove',onMouseMove);
-    document.onmouseup=null;
+  document.addEventListener('mousemove',move);
+  document.onmouseup=()=>{
+    document.removeEventListener('mousemove',move);
   };
 }
 </script>
