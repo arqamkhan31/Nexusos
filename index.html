@@ -1,6 +1,165 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>NexusOS v2</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0a0a0a;
+      color: white;
+      font-family: monospace;
+    }
+
+    .taskbar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #111;
+      padding: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .icon {
+      margin: 20px;
+      cursor: pointer;
+    }
+
+    .window {
+      display: none;
+      position: absolute;
+      top: 80px;
+      left: 80px;
+      background: #1a1a1a;
+      padding: 10px;
+      border: 1px solid #555;
+      width: 300px;
+    }
+
+    .titlebar {
+      display: flex;
+      justify-content: space-between;
+      background: #222;
+      padding: 5px;
+      cursor: move;
+    }
+
+    .close {
+      cursor: pointer;
+      color: red;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: black;
+      color: white;
+      border: 1px solid #555;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="desktop">
+  <div class="icon" onclick="openApp('terminal')">🖥 Terminal</div>
+  <div class="icon" onclick="openApp('notes')">📝 Notes</div>
+</div>
+
+<div id="terminal" class="window">
+  <div class="titlebar" onmousedown="drag(event, 'terminal')">
+    Terminal <span class="close" onclick="closeApp('terminal')">X</span>
+  </div>
+  <input id="cmd" placeholder="Type command...">
+  <div id="output"></div>
+</div>
+
+<div id="notes" class="window">
+  <div class="titlebar" onmousedown="drag(event, 'notes')">
+    Notes <span class="close" onclick="closeApp('notes')">X</span>
+  </div>
+  <textarea id="noteArea"></textarea>
+</div>
+
+<div class="taskbar">
+  <div>NexusOS v2</div>
+  <div id="clock"></div>
+</div>
+
+<script>
+// open/close apps
+function openApp(app) {
+  document.getElementById(app).style.display = "block";
+}
+
+function closeApp(app) {
+  document.getElementById(app).style.display = "none";
+}
+
+// terminal
+document.getElementById("cmd").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    let cmd = this.value.toLowerCase();
+    let output = document.getElementById("output");
+
+    if (cmd === "hello") {
+      output.innerHTML += "<p>Hello User 👋</p>";
+    } 
+    else if (cmd === "time") {
+      output.innerHTML += "<p>" + new Date() + "</p>";
+    }
+    else if (cmd === "clear") {
+      output.innerHTML = "";
+    }
+    else {
+      output.innerHTML += "<p>Unknown command ❌</p>";
+    }
+
+    this.value = "";
+  }
+});
+
+// clock
+setInterval(() => {
+  document.getElementById("clock").innerText = new Date().toLocaleTimeString();
+}, 1000);
+
+// notes auto save
+let note = document.getElementById("noteArea");
+note.value = localStorage.getItem("notes") || "";
+
+note.addEventListener("input", () => {
+  localStorage.setItem("notes", note.value);
+});
+
+// drag system
+function drag(e, id) {
+  let el = document.getElementById(id);
+  let shiftX = e.clientX - el.getBoundingClientRect().left;
+  let shiftY = e.clientY - el.getBoundingClientRect().top;
+
+  function moveAt(x, y) {
+    el.style.left = x - shiftX + 'px';
+    el.style.top = y - shiftY + 'px';
+  }
+
+  function onMouseMove(e) {
+    moveAt(e.pageX, e.pageY);
+  }
+
+  document.addEventListener('mousemove', onMouseMove);
+
+  document.onmouseup = function() {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.onmouseup = null;
+  };
+}
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+<head>
   <title>NexusOS</title>
   <style>
     body {
