@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="nexus.css">
+</head>
+<body>
+
+  <!-- ════════════ BOOT SCREEN ════════════ -->
+  <div id="boot-screen">
+    <canvas id="boot-canvas"></canvas>
+    <div class="boot-center">
+      <div class="boot-hex-ring">
+        <svg viewBox="0 0 120 120" class="boot-hex-svg">
+          <polygon class="hex-outer" points="60,4 112,33 112,87 60,116 8,87 8,33"/>
+          <polygon class="hex-inner" points="60,22 94,42 94,78 60,98 26,78 26,42"/>
+          <polygon class="hex-core" points="60,40 76,50 76,70 60,80 44,70 44,50"/>
+        </svg>
+        <div class="boot-n">N</div>
+      </div>
+      <div class="boot-brand">NEXUS<span>OS</span></div>
+      <div class="boot-tagline">QUANTUM CORE — v3.0.0</div>
+      <div class="boot-progress-wrap">
+        <div class="boot-track">
+          <div class="boot-bar" id="boot-bar"></div>
+        </div>
+      </div>
+      <div class="boot-status" id="boot-status">Initializing...</div>
+    </div>
+  </div>
+
+  <!-- ════════════ DESKTOP ════════════ -->
+  <div id="desktop" class="hidden">
+
+    <!-- Layered animated background -->
+    <div id="desk-bg">
+      <div class="bg-blob b1"></div>
+      <div class="bg-blob b2"></div>
+      <div class="bg-blob b3"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-vignette"></div>
+    </div>
+
+    <!-- Desktop icons -->
+    <div id="desktop-icons"></div>
+
+    <!-- All windows go here -->
+    <div id="windows-layer"></div>
+
+    <!-- Right-click context menu -->
+    <div id="ctx-menu" class="hidden">
+      <ul id="ctx-list"></ul>
+    </div>
+
+    <!-- Spotlight-style app launcher -->
+    <div id="launcher" class="hidden">
+      <div class="launcher-veil"></div>
+      <div class="launcher-panel">
+        <div class="launcher-row">
+          <svg class="lnch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="7.5"/><path d="m20 20-3.5-3.5"/>
+          </svg>
+          <input id="launcher-input" type="text" placeholder="Search applications…" autocomplete="off" spellcheck="false">
+          <kbd>ESC</kbd>
+        </div>
+        <div id="launcher-results"></div>
+      </div>
+    </div>
+
+    <!-- ── Taskbar ── -->
+    <div id="taskbar">
+      <div class="tb-left">
+        <button class="tb-nexus-btn" id="launcher-btn" title="Launch Menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <polygon points="12 2 20 7 20 17 12 22 4 17 4 7"/>
+            <polygon points="12 7 16 9.5 16 14.5 12 17 8 14.5 8 9.5" fill="currentColor" opacity="0.6"/>
+          </svg>
+        </button>
+      </div>
+      <div class="tb-center" id="tb-apps"></div>
+      <div class="tb-right">
+        <div class="tray-icons">
+          <span class="tray-ic" title="Network">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="tray-ic" title="Volume">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          </span>
+        </div>
+        <div id="tb-clock">
+          <div id="tb-time">00:00</div>
+          <div id="tb-date">Mon Jan 1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── App Dock ── -->
+    <div id="dock">
+      <div id="dock-inner"></div>
+    </div>
+
+    <!-- Notification toasts -->
+    <div id="notif-stack"></div>
+
+  </div>
+
+  <script src="kernel.js"></script>
+  <script src="apps.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
