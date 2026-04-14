@@ -1,122 +1,203 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexusOS</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="nexus.css">
+<meta charset="UTF-8">
+<title>NexusOS Ultra</title>
+<style>
+body {
+  margin: 0;
+  font-family: monospace;
+  background: #050505;
+  color: #00ff9f;
+  overflow: hidden;
+}
+
+/* TOP BAR */
+.topbar {
+  height: 40px;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  border-bottom: 1px solid #00ff9f33;
+}
+
+/* DESKTOP */
+.desktop {
+  height: calc(100vh - 40px);
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+  gap: 15px;
+}
+
+/* ICONS */
+.icon {
+  width: 90px;
+  height: 90px;
+  background: #111;
+  border: 1px solid #00ff9f33;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.icon:hover {
+  transform: scale(1.05);
+  border-color: #00ff9f;
+}
+
+/* WINDOW */
+.window {
+  position: absolute;
+  width: 350px;
+  height: 300px;
+  background: #0b0b0b;
+  border: 1px solid #00ff9f55;
+  top: 80px;
+  left: 80px;
+  display: none;
+  flex-direction: column;
+}
+.winbar {
+  background: #111;
+  padding: 5px;
+  cursor: move;
+}
+.content {
+  flex: 1;
+  padding: 10px;
+  overflow: auto;
+}
+
+/* TERMINAL */
+input, textarea {
+  width: 100%;
+  background: black;
+  color: #00ff9f;
+  border: 1px solid #00ff9f33;
+  padding: 5px;
+}
+
+button {
+  background: black;
+  color: #00ff9f;
+  border: 1px solid #00ff9f33;
+  cursor: pointer;
+}
+</style>
 </head>
+
 <body>
 
-  <!-- ════════════ BOOT SCREEN ════════════ -->
-  <div id="boot-screen">
-    <canvas id="boot-canvas"></canvas>
-    <div class="boot-center">
-      <div class="boot-hex-ring">
-        <svg viewBox="0 0 120 120" class="boot-hex-svg">
-          <polygon class="hex-outer" points="60,4 112,33 112,87 60,116 8,87 8,33"/>
-          <polygon class="hex-inner" points="60,22 94,42 94,78 60,98 26,78 26,42"/>
-          <polygon class="hex-core" points="60,40 76,50 76,70 60,80 44,70 44,50"/>
-        </svg>
-        <div class="boot-n">N</div>
-      </div>
-      <div class="boot-brand">NEXUS<span>OS</span></div>
-      <div class="boot-tagline">QUANTUM CORE — v3.0.0</div>
-      <div class="boot-progress-wrap">
-        <div class="boot-track">
-          <div class="boot-bar" id="boot-bar"></div>
-        </div>
-      </div>
-      <div class="boot-status" id="boot-status">Initializing...</div>
-    </div>
+<div class="topbar">
+  <div>NexusOS Ultra</div>
+  <div id="time"></div>
+</div>
+
+<div class="desktop">
+
+  <div class="icon" onclick="openWin('terminal')">
+    💻<br>Terminal
   </div>
 
-  <!-- ════════════ DESKTOP ════════════ -->
-  <div id="desktop" class="hidden">
-
-    <!-- Layered animated background -->
-    <div id="desk-bg">
-      <div class="bg-blob b1"></div>
-      <div class="bg-blob b2"></div>
-      <div class="bg-blob b3"></div>
-      <div class="bg-grid"></div>
-      <div class="bg-vignette"></div>
-    </div>
-
-    <!-- Desktop icons -->
-    <div id="desktop-icons"></div>
-
-    <!-- All windows go here -->
-    <div id="windows-layer"></div>
-
-    <!-- Right-click context menu -->
-    <div id="ctx-menu" class="hidden">
-      <ul id="ctx-list"></ul>
-    </div>
-
-    <!-- Spotlight-style app launcher -->
-    <div id="launcher" class="hidden">
-      <div class="launcher-veil"></div>
-      <div class="launcher-panel">
-        <div class="launcher-row">
-          <svg class="lnch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <circle cx="11" cy="11" r="7.5"/><path d="m20 20-3.5-3.5"/>
-          </svg>
-          <input id="launcher-input" type="text" placeholder="Search applications…" autocomplete="off" spellcheck="false">
-          <kbd>ESC</kbd>
-        </div>
-        <div id="launcher-results"></div>
-      </div>
-    </div>
-
-    <!-- ── Taskbar ── -->
-    <div id="taskbar">
-      <div class="tb-left">
-        <button class="tb-nexus-btn" id="launcher-btn" title="Launch Menu">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <polygon points="12 2 20 7 20 17 12 22 4 17 4 7"/>
-            <polygon points="12 7 16 9.5 16 14.5 12 17 8 14.5 8 9.5" fill="currentColor" opacity="0.6"/>
-          </svg>
-        </button>
-      </div>
-      <div class="tb-center" id="tb-apps"></div>
-      <div class="tb-right">
-        <div class="tray-icons">
-          <span class="tray-ic" title="Network">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-              <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/>
-              <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/>
-            </svg>
-          </span>
-          <span class="tray-ic" title="Volume">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-            </svg>
-          </span>
-        </div>
-        <div id="tb-clock">
-          <div id="tb-time">00:00</div>
-          <div id="tb-date">Mon Jan 1</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── App Dock ── -->
-    <div id="dock">
-      <div id="dock-inner"></div>
-    </div>
-
-    <!-- Notification toasts -->
-    <div id="notif-stack"></div>
-
+  <div class="icon" onclick="openWin('notes')">
+    📝<br>Notes
   </div>
 
-  <script src="kernel.js"></script>
-  <script src="apps.js"></script>
-  <script src="ui.js"></script>
+  <div class="icon" onclick="openWin('ai')">
+    🤖<br>AI
+  </div>
+
+</div>
+
+<!-- TERMINAL -->
+<div class="window" id="terminal">
+  <div class="winbar">Terminal</div>
+  <div class="content">
+    <div id="termOut">NexusOS shell ready...</div>
+    <input id="cmd" placeholder="type help..." onkeydown="runCmd(event)">
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="window" id="notes">
+  <div class="winbar">Notes</div>
+  <div class="content">
+    <textarea id="noteBox" oninput="saveNote()"></textarea>
+  </div>
+</div>
+
+<!-- AI -->
+<div class="window" id="ai">
+  <div class="winbar">Offline AI</div>
+  <div class="content">
+    <div id="aiOut">Ask me something...</div>
+    <input id="aiInput" onkeydown="aiAsk(event)">
+  </div>
+</div>
+
+<script>
+function openWin(id){
+  document.getElementById(id).style.display = "flex";
+}
+
+// TIME
+setInterval(()=>{
+  document.getElementById("time").innerText = new Date().toLocaleTimeString();
+},1000);
+
+// TERMINAL
+function runCmd(e){
+  if(e.key === "Enter"){
+    let cmd = e.target.value;
+    let out = document.getElementById("termOut");
+
+    if(cmd === "help"){
+      out.innerHTML += "<br>Commands: help, clear, time";
+    }
+    else if(cmd === "clear"){
+      out.innerHTML = "";
+    }
+    else if(cmd === "time"){
+      out.innerHTML += "<br>" + new Date();
+    }
+    else {
+      out.innerHTML += "<br>Unknown command: " + cmd;
+    }
+    e.target.value = "";
+  }
+}
+
+// NOTES (localStorage)
+let noteBox = document.getElementById("noteBox");
+noteBox.value = localStorage.getItem("notes") || "";
+
+function saveNote(){
+  localStorage.setItem("notes", noteBox.value);
+}
+
+// FAKE AI (offline logic)
+function aiAsk(e){
+  if(e.key === "Enter"){
+    let q = e.target.value.toLowerCase();
+    let out = document.getElementById("aiOut");
+
+    let res = "I don't understand.";
+
+    if(q.includes("hello")) res = "Hello user 👋";
+    if(q.includes("name")) res = "I am Nexus AI (offline mode)";
+    if(q.includes("time")) res = new Date().toLocaleTimeString();
+    if(q.includes("help")) res = "Try: hello, time, name";
+
+    out.innerHTML = "You: " + q + "<br>AI: " + res;
+    e.target.value = "";
+  }
+}
+</script>
+
 </body>
 </html>
