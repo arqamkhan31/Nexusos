@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NexusOS Level 2</title>
+
+<style>
+body{
+  margin:0;
+  font-family: monospace;
+  background: radial-gradient(circle at top,#0f2027,#050505);
+  color:#00ff9f;
+  overflow:hidden;
+}
+
+/* TASKBAR */
+.taskbar{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  height:45px;
+  background:rgba(10,10,10,0.8);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 10px;
+  border-top:1px solid #00ff9f33;
+  backdrop-filter: blur(10px);
+}
+
+/* DESKTOP */
+.desktop{
+  position:absolute;
+  top:0;
+  bottom:45px;
+  width:100%;
+  display:flex;
+  flex-wrap:wrap;
+  padding:20px;
+  gap:15px;
+}
+
+/* ICONS */
+.icon{
+  width:90px;
+  height:90px;
+  background:rgba(20,20,20,0.6);
+  border:1px solid #00ff9f22;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  transition:0.2s;
+  border-radius:10px;
+}
+.icon:hover{
+  transform:scale(1.08);
+  border-color:#00ff9f;
+  box-shadow:0 0 10px #00ff9f33;
+}
+
+/* WINDOWS */
+.window{
+  position:absolute;
+  width:380px;
+  height:320px;
+  background:rgba(10,10,10,0.9);
+  border:1px solid #00ff9f55;
+  border-radius:10px;
+  display:none;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 0 20px #00ff9f22;
+}
+
+.winbar{
+  background:#111;
+  padding:6px;
+  cursor:move;
+  display:flex;
+  justify-content:space-between;
+}
+
+.content{
+  flex:1;
+  padding:10px;
+  overflow:auto;
+}
+
+input, textarea{
+  width:100%;
+  background:black;
+  color:#00ff9f;
+  border:1px solid #00ff9f33;
+  padding:6px;
+  outline:none;
+}
+
+button{
+  background:#111;
+  color:#00ff9f;
+  border:1px solid #00ff9f33;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+  <div>NexusOS v2</div>
+  <div id="time"></div>
+</div>
+
+<!-- DESKTOP -->
+<div class="desktop">
+
+  <div class="icon" onclick="openApp('terminal')">💻<br>Terminal</div>
+  <div class="icon" onclick="openApp('notes')">📝<br>Notes</div>
+  <div class="icon" onclick="openApp('ai')">🤖<br>AI</div>
+  <div class="icon" onclick="openApp('files')">📁<br>Files</div>
+
+</div>
+
+<!-- TERMINAL -->
+<div class="window" id="terminal">
+  <div class="winbar">Terminal <span onclick="closeApp('terminal')">❌</span></div>
+  <div class="content">
+    <div id="termOut">NexusOS Terminal Ready</div>
+    <input id="cmd" onkeydown="runCmd(event)" placeholder="type help">
+  </div>
+</div>
+
+<!-- NOTES -->
+<div class="window" id="notes">
+  <div class="winbar">Notes <span onclick="closeApp('notes')">❌</span></div>
+  <div class="content">
+    <textarea id="noteBox" oninput="saveNotes()"></textarea>
+  </div>
+</div>
+
+<!-- AI -->
+<div class="window" id="ai">
+  <div class="winbar">AI Core <span onclick="closeApp('ai')">❌</span></div>
+  <div class="content">
+    <div id="aiOut">Ask something...</div>
+    <input id="aiInput" onkeydown="aiAsk(event)">
+  </div>
+</div>
+
+<!-- FILES -->
+<div class="window" id="files">
+  <div class="winbar">File System <span onclick="closeApp('files')">❌</span></div>
+  <div class="content">
+    <input id="fileName" placeholder="file name">
+    <textarea id="fileData" placeholder="write data"></textarea>
+    <button onclick="saveFile()">Save File</button>
+    <div id="fileList"></div>
+  </div>
+</div>
+
+<script>
+let z = 1;
+
+function openApp(id){
+  let el = document.getElementById(id);
+  el.style.display="flex";
+  el.style.zIndex = ++z;
+}
+
+function closeApp(id){
+  document.getElementById(id).style.display="none";
+}
+
+/* TIME */
+setInterval(()=>{
+  document.getElementById("time").innerText = new Date().toLocaleTimeString();
+},1000);
+
+/* TERMINAL */
+function runCmd(e){
+  if(e.key==="Enter"){
+    let cmd = e.target.value;
+    let out = document.getElementById("termOut");
+
+    if(cmd==="help"){
+      out.innerHTML+="<br>help, clear, time, sys";
+    }
+    else if(cmd==="clear"){
+      out.innerHTML="";
+    }
+    else if(cmd==="time"){
+      out.innerHTML+="<br>"+new Date();
+    }
+    else if(cmd==="sys"){
+      out.innerHTML+="<br>NexusOS v2 running fine ⚡";
+    }
+    else{
+      out.innerHTML+="<br>cmd not found";
+    }
+    e.target.value="";
+  }
+}
+
+/* NOTES */
+let noteBox=document.getElementById("noteBox");
+noteBox.value=localStorage.getItem("notes")||"";
+function saveNotes(){
+  localStorage.setItem("notes",noteBox.value);
+}
+
+/* AI BRAIN */
+function aiAsk(e){
+  if(e.key==="Enter"){
+    let q=e.target.value.toLowerCase();
+    let out=document.getElementById("aiOut");
+
+    let res="I don't know.";
+
+    if(q.includes("hello")) res="Hello user 👋";
+    else if(q.includes("name")) res="Nexus AI v2";
+    else if(q.includes("time")) res=new Date().toLocaleTimeString();
+    else if(q.includes("who are you")) res="I am a local offline AI simulation.";
+    else if(q.includes("help")) res="try: hello, name, time";
+
+    out.innerHTML="You: "+q+"<br>AI: "+res;
+    e.target.value="";
+  }
+}
+
+/* FILE SYSTEM */
+function saveFile(){
+  let name=document.getElementById("fileName").value;
+  let data=document.getElementById("fileData").value;
+
+  if(!name) return;
+
+  localStorage.setItem("file_"+name,data);
+  loadFiles();
+}
+
+function loadFiles(){
+  let list=document.getElementById("fileList");
+  list.innerHTML="<br><b>Files:</b><br>";
+
+  for(let i=0;i<localStorage.length;i++){
+    let key=localStorage.key(i);
+    if(key.startsWith("file_")){
+      let name=key.replace("file_","");
+      list.innerHTML+="📄 "+name+"<br>";
+    }
+  }
+}
+loadFiles();
+
+/* DRAG WINDOWS */
+document.querySelectorAll(".window").forEach(win=>{
+  let bar=win.querySelector(".winbar");
+  let offsetX,offsetY,drag=false;
+
+  bar.addEventListener("mousedown",(e)=>{
+    drag=true;
+    offsetX=e.clientX-win.offsetLeft;
+    offsetY=e.clientY-win.offsetTop;
+    win.style.zIndex=++z;
+  });
+
+  document.addEventListener("mousemove",(e)=>{
+    if(drag){
+      win.style.left=(e.clientX-offsetX)+"px";
+      win.style.top=(e.clientY-offsetY)+"px";
+    }
+  });
+
+  document.addEventListener("mouseup",()=>drag=false);
+});
+</script>
+
+</body>
+</html>
