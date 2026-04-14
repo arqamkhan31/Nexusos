@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexusOS 3.1 — Quantum</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="nexus.css">
+</head>
+<body>
+
+  <!-- ══════════ BOOT SCREEN ══════════ -->
+  <div id="boot-screen">
+    <canvas id="boot-canvas"></canvas>
+    <div class="boot-center">
+      <div class="boot-hex-ring">
+        <svg viewBox="0 0 120 120" class="boot-hex-svg">
+          <polygon class="hex-outer" points="60,4 112,33 112,87 60,116 8,87 8,33"/>
+          <polygon class="hex-inner" points="60,22 94,42 94,78 60,98 26,78 26,42"/>
+          <polygon class="hex-core"  points="60,40 76,50 76,70 60,80 44,70 44,50"/>
+        </svg>
+        <div class="boot-n">N</div>
+      </div>
+      <div class="boot-brand">NEXUS<span>OS</span></div>
+      <div class="boot-tagline">QUANTUM CORE — v3.1.0 — AI EDITION</div>
+      <div class="boot-progress-wrap">
+        <div class="boot-track"><div class="boot-bar" id="boot-bar"></div></div>
+      </div>
+      <div class="boot-status" id="boot-status">Initializing quantum kernel…</div>
+    </div>
+  </div>
+
+  <!-- ══════════ DESKTOP ══════════ -->
+  <div id="desktop" class="hidden">
+
+    <div id="desk-bg">
+      <div class="bg-blob b1"></div>
+      <div class="bg-blob b2"></div>
+      <div class="bg-blob b3"></div>
+      <div class="bg-grid"></div>
+      <div class="bg-vignette"></div>
+    </div>
+
+    <div id="desktop-icons"></div>
+    <div id="windows-layer"></div>
+
+    <!-- Right-click context menu -->
+    <div id="ctx-menu" class="hidden"><ul id="ctx-list"></ul></div>
+
+    <!-- App Launcher / Spotlight -->
+    <div id="launcher" class="hidden">
+      <div class="launcher-veil"></div>
+      <div class="launcher-panel">
+        <div class="launcher-row">
+          <svg class="lnch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="7.5"/><path d="m20 20-3.5-3.5"/>
+          </svg>
+          <input id="launcher-input" type="text" placeholder="Search apps, files, or the web…" autocomplete="off" spellcheck="false">
+          <kbd>ESC</kbd>
+        </div>
+        <div id="launcher-results"></div>
+        <div id="launcher-web-row" class="launcher-web-row hidden">
+          <span class="lweb-label">Search the web for</span>
+          <span id="launcher-web-query" class="lweb-query"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Taskbar ── -->
+    <div id="taskbar">
+      <div class="tb-left">
+        <button class="tb-nexus-btn" id="launcher-btn" title="App Launcher (Ctrl+Space)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <polygon points="12 2 20 7 20 17 12 22 4 17 4 7"/>
+            <polygon points="12 7 16 9.5 16 14.5 12 17 8 14.5 8 9.5" fill="currentColor" opacity="0.6"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Global search bar -->
+      <div class="tb-search-wrap">
+        <svg class="tb-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/>
+        </svg>
+        <input id="tb-search" type="text" placeholder="Search files, apps, web…" autocomplete="off" spellcheck="false">
+        <div id="tb-search-results" class="tb-search-dropdown hidden"></div>
+      </div>
+
+      <div class="tb-center" id="tb-apps"></div>
+
+      <div class="tb-right">
+        <div class="tray-icons">
+          <span class="tray-ic" title="Wi-Fi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="tray-ic" title="Volume">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          </span>
+          <span class="tray-ic ai-tray" id="ai-tray-btn" title="NexusAI Assistant">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="15" height="15">
+              <path d="M12 2a10 10 0 0 1 10 10c0 5.52-4.48 10-10 10S2 17.52 2 12 6.48 2 12 2z"/>
+              <path d="M8 12h8M12 8v8" stroke-width="2"/>
+            </svg>
+          </span>
+        </div>
+        <div id="tb-clock">
+          <div id="tb-time">00:00</div>
+          <div id="tb-date">Mon Jan 1</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Dock ── -->
+    <div id="dock"><div id="dock-inner"></div></div>
+
+    <!-- Notification stack -->
+    <div id="notif-stack"></div>
+  </div>
+
+  <script src="kernel.js"></script>
+  <script src="apps.js"></script>
+  <script src="ui.js"></script>
+</body>
+</html>
