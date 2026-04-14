@@ -1,0 +1,119 @@
+<style>
+  body {
+    margin:0;
+    font-family:monospace;
+
+    /* 🔴 Dark Red Base */
+    background:#2b0000;
+
+    /* ⚫ Black Lines */
+    background-image: repeating-linear-gradient(
+      0deg,
+      #2b0000,
+      #2b0000 40px,
+      #000000 42px
+    );
+
+    color:white;
+    font-size:18px;
+  }
+
+  .taskbar {
+    position:fixed;
+    bottom:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    background:rgba(80,0,0,0.9);
+    backdrop-filter:blur(10px);
+    padding:10px;
+    font-size:16px;
+    border-top:1px solid red;
+  }
+
+  .icon {
+    margin:25px;
+    font-size:22px;
+    cursor:pointer;
+    transition:0.2s;
+  }
+
+  .icon:hover { 
+    transform:scale(1.2);
+    text-shadow:0 0 10px red;
+  }
+
+  .window {
+    display:none;
+    position:absolute;
+    top:80px;
+    left:80px;
+    width:380px;
+    background:rgba(0,0,0,0.75);
+    backdrop-filter:blur(15px);
+    border-radius:12px;
+    border:1px solid red;
+    box-shadow:0 0 15px rgba(255,0,0,0.3);
+    overflow:hidden;
+  }
+
+  .titlebar {
+    background:rgba(255,0,0,0.2);
+    padding:8px;
+    display:flex;
+    justify-content:space-between;
+    cursor:move;
+    font-size:16px;
+  }
+
+  .close { 
+    color:red; 
+    cursor:pointer; 
+    font-weight:bold;
+  }
+
+  input, textarea {
+    width:100%;
+    background:black;
+    color:white;
+    border:1px solid red;
+    padding:8px;
+    font-size:14px;
+  }
+
+  button {
+    background:darkred;
+    color:white;
+    border:none;
+    padding:8px;
+    width:100%;
+    cursor:pointer;
+  }
+
+  button:hover {
+    background:red;
+  }
+
+  iframe { 
+    width:100%; 
+    height:220px; 
+    border:none; 
+  }
+
+  #login {
+    position:fixed;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    background:black;
+  }
+
+  #chatbox {
+    height:220px;
+    overflow:auto;
+    padding:8px;
+  }
+</style>
